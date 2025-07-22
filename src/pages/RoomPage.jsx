@@ -22,7 +22,7 @@ export default function RoomPage() {
         myVideo.current.muted = true
 
         const peer = new Peer(undefined, {
-          host: "10.112.22.149",
+          host: SERVER_URL,
           path: "/",
           port: 9000,
           secure: false,
