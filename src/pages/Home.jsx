@@ -4,7 +4,7 @@ import api from "../api"
 
 function Home() {
   const [name, setName] = useState("")
-  //const [isPrivate, setIsPrivate] = useState(false)
+  const [isPrivate, setIsPrivate] = useState(false)
   const navigate = useNavigate()
 
   const handleCreateRoom = async () => {
@@ -30,17 +30,15 @@ function Home() {
         onChange={(e) => setName(e.target.value)}
         className="p-2 mb-4 border rounded"
       />
-      {
-      //<label>
-      //  <input
-      //    type="checkbox"
-      //    checked={isPrivate}
-      //    onChange={() => setIsPrivate(!isPrivate)}
-      //    className="mr-2"
-      //  />
-      //  Private Room
-      //</label>
-      }
+      <label>
+        <input
+          type="checkbox"
+          checked={isPrivate}
+          onChange={() => setIsPrivate(!isPrivate)}
+          className="mr-2"
+        />
+        Private Room
+      </label>
       <button className="bg-blue-500 text-white px-4 py-2 rounded" onClick={joinRoom}>
         Join Room
       </button>
