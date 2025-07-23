@@ -1,28 +1,55 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+
+const API_URL = "http://localhost:3000/api/todo";
 
 const TodoList = () => {
   const [task, setTask] = useState("");
   const [tasks, setTasks] = useState([]);
 
+  useEffect(() => {
+    axios
+      .get(API_URL)
+      .then((res) => setTasks(res.data))
+      .catch((err) => console.error("Fetch error:", err));
+  }, []);
+
   const addTask = () => {
     if (task.trim() === "") return;
-    setTasks([...tasks, { text: task, completed: false }]);
-    setTask("");
+    axios
+      .post(API_URL, { text: task })
+      .then((res) => {
+        setTasks([...tasks, res.data]);
+        setTask("");
+      })
+      .catch((err) => console.error("Add error:", err));
   };
 
-  const toggleComplete = (index) => {
-    const updated = tasks.map((item, i) =>
-      i === index ? { ...item, completed: !item.completed } : item
-    );
-    setTasks(updated);
+  const toggleComplete = (id) => {
+    const todo = tasks.find((t) => t._id === id);
+    axios
+      .patch(`${API_URL}/${id}`, { completed: !todo.completed })
+      .then((res) =>
+        setTasks(
+          tasks.map((t) =>
+            t._id === id ? { ...t, completed: !t.completed } : t
+          )
+        )
+      )
+      .catch((err) => console.error("Toggle error:", err));
   };
 
-  const deleteTask = (index) => {
-    setTasks(tasks.filter((_, i) => i !== index));
+  const deleteTask = (id) => {
+    axios
+      .delete(`${API_URL}/${id}`)
+      .then(() => setTasks(tasks.filter((t) => t._id !== id)))
+      .catch((err) => console.error("Delete error", err));
   };
 
   const clearAll = () => {
-    setTasks([]);
+    Promise.all(tasks.map((t) => axios.delete(`${API_URL}/${t._id}`)))
+      .then(() => setTasks([]))
+      .catch((err) => console.error("Clear all errors:", err));
   };
 
   return (
@@ -45,12 +72,12 @@ const TodoList = () => {
 
         <ul style={styles.taskList}>
           {tasks.map((item, index) => (
-            <li key={index} style={styles.taskItem}>
+            <li key={item._id} style={styles.taskItem}>
               <label style={styles.label}>
                 <input
                   type="checkbox"
                   checked={item.completed}
-                  onChange={() => toggleComplete(index)}
+                  onChange={() => toggleComplete(item._id)}
                   style={styles.checkbox}
                 />
                 <span
@@ -63,7 +90,10 @@ const TodoList = () => {
                   {item.text}
                 </span>
               </label>
-              <button onClick={() => deleteTask(index)} style={styles.deleteBtn}>
+              <button
+                onClick={() => deleteTask(item._id)}
+                style={styles.deleteBtn}
+              >
                 🗑️
               </button>
             </li>
