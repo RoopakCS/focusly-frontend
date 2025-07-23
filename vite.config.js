@@ -7,7 +7,7 @@ export default defineConfig({
   server: {
     proxy: {
       "/socket.io": {
-        target: `https://${SERVER_URL}`,
+        target: SERVER_URL.origin,
         ws: true
       }
     }

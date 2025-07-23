@@ -4,6 +4,8 @@ import { socket } from "../socket"
 import SERVER_URL from '../SERVER_URL'
 import { useParams } from 'react-router-dom'
 
+import ChatBox from '../components/ChatBox'
+
 export default function RoomPage() {
   const { roomId } = useParams()
   const [peers, setPeers] = useState({})
@@ -21,11 +23,18 @@ export default function RoomPage() {
         myVideo.current.srcObject = stream
         myVideo.current.muted = true
 
+        //const peer = new Peer(undefined, {
+        //  host: "liabilities-pre-pushing-textiles.trycloudflare.com",
+        //  port: 443,
+        //  path: "/",
+        //  secure: true,
+        //})
+        
         const peer = new Peer(undefined, {
-          host: "liabilities-pre-pushing-textiles.trycloudflare.com",
-          port: 443,
+          host: "localhost",
+          port: 9000,
           path: "/",
-          secure: true,
+          secure: false,
         })
 
         peerRef.current = peer
@@ -109,6 +118,8 @@ export default function RoomPage() {
         <video ref={myVideo} autoPlay playsInline muted width="200" style={{ transform: "scaleX(-1)" }} />
       }
       <div ref={videosRef}></div>
+
+      <ChatBox roomId={roomId} />
     </>
   )
 }
