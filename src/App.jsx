@@ -1,18 +1,14 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
-import RoomPage from './pages/RoomPage'
-
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Home from "./pages/Home";
+import RoomPage from "./pages/RoomPage";
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <>
-      HELLO WORLD
-      <RoomPage />
-    </>
-  )
+    <Router>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/room/:code" element={<RoomPage />} />
+      </Routes>
+    </Router>
+  );
 }
-
-export default App
+export default App;
