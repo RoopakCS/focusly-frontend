@@ -22,9 +22,8 @@ export default function RoomPage() {
         myVideo.current.muted = true
 
         const peer = new Peer(undefined, {
-          host: SERVER_URL,
+          host: "0cfcf4cc6eea.ngrok-free.app",
           path: "/",
-          port: 9000,
           secure: false,
         })
 
