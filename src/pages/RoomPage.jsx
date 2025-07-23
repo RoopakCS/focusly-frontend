@@ -23,6 +23,7 @@ export default function RoomPage() {
 
         const peer = new Peer(undefined, {
           host: "0cfcf4cc6eea.ngrok-free.app",
+          port: 443,
           path: "/",
           secure: true,
         })
