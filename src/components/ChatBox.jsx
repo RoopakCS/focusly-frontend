@@ -10,14 +10,8 @@ const ChatBox = ({ user = "Guest", roomId = "general-room" }) => {
   const messagesEndRef = useRef(null);
 
   useEffect(() => {
-    // Fetch old messages from backend
     api.get(`/api/messages/${roomId}`).then((res) => {
       setMessages(Array.isArray(res.data.chat) ? res.data.chat : []);
-    });
-
-    // Listen for new messages
-    socket.on("receiveMessage", (msg) => {
-      setMessages((prev) => [...prev, msg]);
     });
 
     return () => {
@@ -33,6 +27,7 @@ const ChatBox = ({ user = "Guest", roomId = "general-room" }) => {
     if (!input.trim()) return;
     const msg = { roomId, user, msg: input };
     socket.emit("sendMessage", msg);
+    setMessages((prev) => [...prev, {user, msg: input}]);
     setInput("");
   };
 
