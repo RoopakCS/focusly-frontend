@@ -24,7 +24,7 @@ export default function RoomPage() {
         const peer = new Peer(undefined, {
           host: "0cfcf4cc6eea.ngrok-free.app",
           path: "/",
-          secure: false,
+          secure: true,
         })
 
         peerRef.current = peer
