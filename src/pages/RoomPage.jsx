@@ -22,7 +22,7 @@ export default function RoomPage() {
         myVideo.current.muted = true
 
         const peer = new Peer(undefined, {
-          host: "0cfcf4cc6eea.ngrok-free.app",
+          host: "liabilities-pre-pushing-textiles.trycloudflare.com",
           port: 443,
           path: "/",
           secure: true,
