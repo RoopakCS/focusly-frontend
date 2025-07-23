@@ -30,6 +30,13 @@ export default function RoomPage() {
 
         peerRef.current = peer
 
+        //debugging
+        console.log("Peer object created", peer);
+
+        peer.on("error", (err) => {
+          console.error("PeerJS Error:", err);
+        });
+
         peer.on("open", id => {
           console.log("Yeppa peer is initialed")
           socket.emit("joinRoom", { roomId, peerId: id })
