@@ -1,4 +1,7 @@
 import { io } from "socket.io-client";
-
-export const socket = io("http://localhost:3000"); 
-export default socket;
+import SERVER_URL from "./SERVER_URL"
+export const socket = io(`https://${SERVER_URL}`, 
+  {
+    transports: ["websocket"],
+  }
+);

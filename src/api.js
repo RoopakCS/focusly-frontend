@@ -1,7 +1,8 @@
-import axios from "axios";
+import axios from "axios"
+import SERVER_URL from "./SERVER_URL"
 
-const API = axios.create({
-  baseURL: "http://localhost:5000/api", // Change when deploying
-});
+const api = axios.create({
+  baseURL: `https://${SERVER_URL}`,
+})
 
-export default API;
+export default api

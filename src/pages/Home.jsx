@@ -1,40 +1,55 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import API from "../api";
-// import PomodoroTimer from "../components/PomodoroTimer";
-import TodoList from "../components/TodoList";
-import ChatBox from "../components/ChatBox";
-export default function Home() {
-  const [roomName, setRoomName] = useState("");
-  const navigate = useNavigate();
+import { useState } from "react"
+import { useNavigate } from "react-router-dom"
+import api from "../api"
 
-  const createRoom = async () => {
-    const res = await API.post("/rooms", {
-      name: roomName,
-      isPrivate: false,
-    });
-    navigate(`/room/${res.data.roomCode}`);
+function Home() {
+  const [name, setName] = useState("")
+  const [isPrivate, setIsPrivate] = useState(false)
+  const navigate = useNavigate()
+
+  const handleCreateRoom = async () => {
+    try {
+      const res = await api.post("/api/rooms", { name, isPrivate })
+      const roomCode = res.data.roomCode
+      navigate(`/room/${roomCode}`)
+    } catch (err) {
+      console.error("Error creating room:", err)
+    }
+  }
+
+  const joinRoom = () => {
+    if (name.trim()) navigate(`/room/${name}`);
   };
 
   return (
-    <div className="flex flex-col items-center p-6 gap-4">
-      <h1 className="text-3xl font-bold" align = "center">Focustgtg5tgly</h1>
+    <div className="flex flex-col items-center justify-center h-screen">
       <input
         type="text"
-        className="border px-3 py-2 rounded"
-        placeholder="Enter Room Name"
-        value={roomName}
-        onChange={(e) => setRoomName(e.target.value)}
+        placeholder="Room Name"
+        value={name}
+        onChange={(e) => setName(e.target.value)}
+        className="p-2 mb-4 border rounded"
       />
+      <label>
+        <input
+          type="checkbox"
+          checked={isPrivate}
+          onChange={() => setIsPrivate(!isPrivate)}
+          className="mr-2"
+        />
+        Private Room
+      </label>
+      <button className="bg-blue-500 text-white px-4 py-2 rounded" onClick={joinRoom}>
+        Join Room
+      </button>
       <button
-        className="bg-pink-500 text-white px-4 py-2 rounded"
-        onClick={createRoom}
+        onClick={handleCreateRoom}
+        className="mt-4 px-4 py-2 bg-blue-500 text-white rounded"
       >
         Create Room
       </button>
-      {/* <PomodoroTimer /> */}
-      <TodoList/>
-      <ChatBox align="centre"/>
     </div>
-  );
+  )
 }
+
+export default Home
