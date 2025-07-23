@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API = "https://localhost:3000/api/todo";
+const API = "http://localhost:3000/api/todo";
 
 export const getTodos = () => axios.get(API);
 export const createTodo = (todo) => axios.post(API, todo);
