@@ -1,6 +1,7 @@
-import { X } from "lucide-react"
-import PomodoroTimer from "../components/PomodoroTimer"
-import TodoList from "../components/TodoList"
+import { X, Edit } from "lucide-react";
+
+import PomodoroTimer from "../components/PomodoroTimer";
+import TodoList from "../components/TodoList";
 import { useEffect, useState } from "react";
 
 function Dashboard({ onClose }) {
@@ -11,7 +12,10 @@ function Dashboard({ onClose }) {
     localStorage.setItem("username", e.target.value);
   };
 
-  useEffect(() => { localStorage.getItem("username") && setUser(localStorage.getItem("username")) }, [])
+  useEffect(() => {
+    localStorage.getItem("username") &&
+      setUser(localStorage.getItem("username"));
+  }, []);
 
   return (
     <div className="fixed inset-0 z-40 bg-white dark:bg-zinc-900 border dark:border-zinc-700 shadow-2xl rounded-2xl m-4 p-6 overflow-y-auto transition-all duration-300">
@@ -31,7 +35,7 @@ function Dashboard({ onClose }) {
           onClick={toggleVisibility}
           className="ml-2 text-sm text-blue-400 hover:text-blue-200"
         >
-          {isVisible ? "Update Username" : "✏️"}
+          {isVisible ? "Update Username" : <Edit className="w-6 h-6" />}
         </button>
       </div>
 
@@ -49,7 +53,7 @@ function Dashboard({ onClose }) {
         <PomodoroTimer />
       </div>
     </div>
-  )
+  );
 }
 
-export default Dashboard
+export default Dashboard;
