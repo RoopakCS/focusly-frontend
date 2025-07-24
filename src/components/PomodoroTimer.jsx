@@ -22,10 +22,6 @@ const PomodoroTimer = () => {
           if (prev === 0) {
             const sessionType = isBreak ? "Break" : "Work";
             const timeStamp = new Date().toLocaleTimeString();
-            setSessionHistory((prevHistory) => [
-              ...prevHistory,
-              { sessionType, timeStamp },
-            ]);
 
             switchAudio.current.play();
 
@@ -58,6 +54,7 @@ const PomodoroTimer = () => {
     setIsStarted(true);
     setIsRunning(true);
     setIsBreak(false);
+    endAudio.current.play().catch((err) => console.log("End audio error:", err));
   };
 
   const handleStartPause = () => {
