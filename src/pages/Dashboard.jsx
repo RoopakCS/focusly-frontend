@@ -15,7 +15,7 @@ function Dashboard({ onClose }) {
 
   return (
     <div className="fixed inset-0 z-40 bg-white dark:bg-zinc-900 border dark:border-zinc-700 shadow-2xl rounded-2xl m-4 p-6 overflow-y-auto transition-all duration-300">
-      <div className="flex justify-between items-center mb-4">
+      <div className="flex items-center mb-4">
         {isVisible ? (
           <input
             type="text"
