@@ -55,7 +55,7 @@ const TodoList = () => {
   return (
     <div style={styles.wrapper}>
       <div style={styles.container}>
-        <h2 style={styles.heading}>✨ To-Do List</h2>
+        <h2 style={styles.heading}>To-Do List</h2>
 
         <div style={styles.inputArea}>
           <input
@@ -112,7 +112,6 @@ const TodoList = () => {
 
 const styles = {
   wrapper: {
-    minHeight: "100vh",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",

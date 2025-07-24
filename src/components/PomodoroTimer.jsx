@@ -7,7 +7,6 @@ const PomodoroTimer = () => {
   const [isRunning, setIsRunning] = useState(false);
   const [isBreak, setIsBreak] = useState(false);
   const [isStarted, setIsStarted] = useState(false);
-  const [sessionHistory, setSessionHistory] = useState([]);
 
   const totalSeconds = useRef(0);
 
@@ -23,10 +22,6 @@ const PomodoroTimer = () => {
           if (prev === 0) {
             const sessionType = isBreak ? "Break" : "Work";
             const timeStamp = new Date().toLocaleTimeString();
-            setSessionHistory((prevHistory) => [
-              ...prevHistory,
-              { sessionType, timeStamp },
-            ]);
 
             switchAudio.current.play();
 
@@ -59,30 +54,21 @@ const PomodoroTimer = () => {
     setIsStarted(true);
     setIsRunning(true);
     setIsBreak(false);
+    endAudio.current.play().catch((err) => console.log("End audio error:", err));
   };
 
   const handleStartPause = () => {
     setIsRunning(!isRunning);
   };
-  
-  const deleteHistoryItem = (indexToDelete) => {
-  setSessionHistory((prevHistory) =>
-    prevHistory.filter((_, index) => index !== indexToDelete)
-  );
-};
-
-const clearAllHistory = () => {
-  setSessionHistory([]);
-};
 
   const handleReset = () => {
-  endAudio.current.play().catch((err) => console.log("End audio error:", err));
-  setIsRunning(false);
-  setIsBreak(false);
-  setIsStarted(false);
-  setSecondsLeft(0);
-  totalSeconds.current = 0;
-};
+    endAudio.current.play().catch((err) => console.log("End audio error:", err));
+    setIsRunning(false);
+    setIsBreak(false);
+    setIsStarted(false);
+    setSecondsLeft(0);
+    totalSeconds.current = 0;
+  };
 
 
   const getProgressPercent = () => {
@@ -142,25 +128,6 @@ const clearAllHistory = () => {
         </>
       )}
 
-      {/* Session History */}
-      
-      <ul>
-  {sessionHistory.map((item, index) => (
-    <li key={index} style={styles.historyItem}>
-      {item.sessionType} session at {item.timeStamp}
-      <button
-        onClick={() => deleteHistoryItem(index)}
-        style={styles.deleteButton}
-      >
-        ✖
-      </button>
-    </li>
-  ))}
-</ul>
-<button onClick={clearAllHistory} style={styles.clearAllButton}>
-  Clear All History
-</button>
-
     </div>
   );
 };
@@ -174,6 +141,7 @@ const styles = {
     borderRadius: "12px",
     width: "320px",
     backgroundColor: "#f9f9f9",
+    color: "black",
   },
   inputs: {
     display: "flex",
@@ -203,41 +171,6 @@ const styles = {
     backgroundColor: "#4caf50",
     transition: "width 1s linear",
   },
-  history: {
-    marginTop: "1rem",
-    textAlign: "left",
-    fontSize: "0.9rem",
-  },
-  historyItem: {
-  display: "flex",
-  justifyContent: "space-between",
-  alignItems: "center",
-  marginBottom: "5px",
-},
-
-deleteButton: {
-  background: "red",
-  color: "#fff",
-  border: "none",
-  borderRadius: "50%",
-  cursor: "pointer",
-  width: "22px",
-  height: "22px",
-  lineHeight: "22px",
-  fontSize: "14px",
-  padding: 0,
-},
-
-clearAllButton: {
-  marginTop: "10px",
-  backgroundColor: "#555",
-  color: "#fff",
-  border: "none",
-  borderRadius: "6px",
-  padding: "5px 10px",
-  cursor: "pointer",
-  fontSize: "14px",
-},
 
 };
 
