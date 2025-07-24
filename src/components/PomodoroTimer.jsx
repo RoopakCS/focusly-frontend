@@ -15,20 +15,12 @@ const PomodoroTimer = () => {
 
   useEffect(() => {
     let timer = null;
-
     if (isRunning) {
       timer = setInterval(() => {
         setSecondsLeft((prev) => {
           if (prev === 0) {
-            const sessionType = isBreak ? "Break" : "Work";
-            const timeStamp = new Date().toLocaleTimeString();
-
             switchAudio.current.play();
-
-            const nextDuration = isBreak
-              ? workMinutes * 60
-              : breakMinutes * 60;
-
+            const nextDuration = isBreak ? workMinutes * 60 : breakMinutes * 60;
             totalSeconds.current = nextDuration;
             setIsBreak((prev) => !prev);
             return nextDuration;
@@ -37,12 +29,13 @@ const PomodoroTimer = () => {
         });
       }, 1000);
     }
-
     return () => clearInterval(timer);
   }, [isRunning, isBreak, workMinutes, breakMinutes]);
 
   const formatTime = (seconds) => {
-    const m = Math.floor(seconds / 60).toString().padStart(2, "0");
+    const m = Math.floor(seconds / 60)
+      .toString()
+      .padStart(2, "0");
     const s = (seconds % 60).toString().padStart(2, "0");
     return `${m}:${s}`;
   };
@@ -54,7 +47,7 @@ const PomodoroTimer = () => {
     setIsStarted(true);
     setIsRunning(true);
     setIsBreak(false);
-    endAudio.current.play().catch((err) => console.log("End audio error:", err));
+    endAudio.current.play().catch(() => {});
   };
 
   const handleStartPause = () => {
@@ -62,7 +55,7 @@ const PomodoroTimer = () => {
   };
 
   const handleReset = () => {
-    endAudio.current.play().catch((err) => console.log("End audio error:", err));
+    endAudio.current.play().catch(() => {});
     setIsRunning(false);
     setIsBreak(false);
     setIsStarted(false);
@@ -70,109 +63,85 @@ const PomodoroTimer = () => {
     totalSeconds.current = 0;
   };
 
-
   const getProgressPercent = () => {
     if (totalSeconds.current === 0) return 0;
     return ((totalSeconds.current - secondsLeft) / totalSeconds.current) * 100;
   };
 
   return (
-    <div style={styles.container}>
-      <h2>Pomodoro Timer</h2>
+    <div className="max-w-sm mx-auto mt-10 p-6 bg-white dark:bg-zinc-900 shadow-xl rounded-2xl text-center">
+      <h2 className="text-2xl font-bold mb-4 text-zinc-800 dark:text-white">
+        🍅 Pomodoro Timer
+      </h2>
 
-      {!isStarted && (
-        <div style={styles.inputs}>
-          <div>
-            <label>Work (min): </label>
+      {!isStarted ? (
+        <div className="space-y-4 mb-4">
+          <div className="flex justify-between items-center">
+            <label className="text-zinc-700 dark:text-zinc-300">
+              Work (min):
+            </label>
             <input
               type="number"
+              min="1"
               value={workMinutes}
               onChange={(e) => setWorkMinutes(Number(e.target.value))}
-              min="1"
+              className="w-20 px-2 py-1 rounded-lg border border-zinc-300 dark:border-zinc-600 bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-white"
             />
           </div>
-          <div>
-            <label>Break (min): </label>
+          <div className="flex justify-between items-center">
+            <label className="text-zinc-700 dark:text-zinc-300">
+              Break (min):
+            </label>
             <input
               type="number"
+              min="1"
               value={breakMinutes}
               onChange={(e) => setBreakMinutes(Number(e.target.value))}
-              min="1"
+              className="w-20 px-2 py-1 rounded-lg border border-zinc-300 dark:border-zinc-600 bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-white"
             />
           </div>
-          <button onClick={handleStart}>Start Timer</button>
+          <button
+            onClick={handleStart}
+            className="w-full py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold transition"
+          >
+            Start Timer
+          </button>
         </div>
-      )}
-
-      {isStarted && (
+      ) : (
         <>
-          <h3>{isBreak ? "Break Time" : "Work Time"}</h3>
-          <div style={styles.timer}>{formatTime(secondsLeft)}</div>
+          <h3 className="text-lg font-medium text-zinc-700 dark:text-zinc-300">
+            {isBreak ? "Break Time 🧘" : "Work Time 💻"}
+          </h3>
 
-          {/* Progress Bar */}
-          <div style={styles.progressBarOuter}>
+          <div className="text-5xl font-bold my-4 text-zinc-900 dark:text-white">
+            {formatTime(secondsLeft)}
+          </div>
+
+          <div className="w-full h-3 bg-zinc-300 dark:bg-zinc-700 rounded-full overflow-hidden mb-4">
             <div
-              style={{
-                ...styles.progressBarInner,
-                width: `${getProgressPercent()}%`,
-              }}
+              className="h-full bg-green-500 transition-all duration-1000"
+              style={{ width: `${getProgressPercent()}%` }}
             />
           </div>
 
-          <div style={styles.buttons}>
-            <button onClick={handleStartPause}>
+          <div className="flex justify-center gap-4">
+            <button
+              onClick={handleStartPause}
+              className="px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-white rounded-lg font-medium"
+            >
               {isRunning ? "Pause" : "Resume"}
             </button>
-            <button onClick={handleReset}>Reset</button>
+            <button
+              onClick={handleReset}
+              className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg font-medium"
+            >
+              Reset
+            </button>
           </div>
         </>
       )}
-
     </div>
   );
 };
-
-const styles = {
-  container: {
-    textAlign: "center",
-    margin: "2rem auto",
-    padding: "1.5rem",
-    border: "2px solid #ccc",
-    borderRadius: "12px",
-    width: "320px",
-    backgroundColor: "#f9f9f9",
-    color: "black",
-  },
-  inputs: {
-    display: "flex",
-    flexDirection: "column",
-    gap: "1rem",
-    marginBottom: "1rem",
-  },
-  timer: {
-    fontSize: "48px",
-    margin: "1rem 0",
-  },
-  buttons: {
-    display: "flex",
-    justifyContent: "space-around",
-    gap: "1rem",
-  },
-  progressBarOuter: {
-    height: "10px",
-    width: "100%",
-    backgroundColor: "#ddd",
-    borderRadius: "10px",
-    marginBottom: "1rem",
-    overflow: "hidden",
-  },
-  progressBarInner: {
-    height: "100%",
-    backgroundColor: "#4caf50",
-    transition: "width 1s linear",
-  },
-
-};
-
 
 export default PomodoroTimer;
