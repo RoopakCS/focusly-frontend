@@ -2,14 +2,14 @@ import { useState } from "react"
 import { PanelRightOpen } from "lucide-react"
 import Dashboard from "../pages/Dashboard"
 
-function DashboardToggle() {
+function DashboardToggle({user, setUser}) {
   const [open, setOpen] = useState(false)
 
   return (
     <>
       {
         open ? 
-          <Dashboard onClose={() => setOpen(false)} /> 
+          <Dashboard onClose={() => setOpen(false)} user={user} setUser={setUser} /> 
         :
           <button
             onClick={() => setOpen(true)}

@@ -29,7 +29,7 @@ const TodoList = () => {
     const todo = tasks.find((t) => t._id === id);
     axios
       .patch(`${API_URL}/${id}`, { completed: !todo.completed })
-      .then((res) =>
+      .then(() =>
         setTasks(
           tasks.map((t) =>
             t._id === id ? { ...t, completed: !t.completed } : t
@@ -53,46 +53,54 @@ const TodoList = () => {
   };
 
   return (
-    <div style={styles.wrapper}>
-      <div style={styles.container}>
-        <h2 style={styles.heading}>To-Do List</h2>
+    <div className="flex items-center justify-center w-full">
+      <div className="w-full max-w-md bg-white dark:bg-zinc-900 bg-opacity-80 backdrop-blur-md shadow-xl rounded-2xl p-6">
+        <h2 className="text-2xl font-bold text-center mb-4 text-zinc-800 dark:text-white">
+          ✨ To-Do List
+        </h2>
 
-        <div style={styles.inputArea}>
+        <div className="flex items-center space-x-2 mb-4">
           <input
             type="text"
             placeholder="Enter a task..."
             value={task}
             onChange={(e) => setTask(e.target.value)}
-            style={styles.input}
+            className="flex-1 px-4 py-2 rounded-lg border dark:border-zinc-700 bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
-          <button onClick={addTask} style={styles.addButton}>
+          <button
+            onClick={addTask}
+            className="px-3 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg transition"
+          >
             ➕
           </button>
         </div>
 
-        <ul style={styles.taskList}>
-          {tasks.map((item, index) => (
-            <li key={item._id} style={styles.taskItem}>
-              <label style={styles.label}>
+        <ul className="space-y-2">
+          {tasks.map((item) => (
+            <li
+              key={item._id}
+              className="flex items-center justify-between px-4 py-2 bg-white dark:bg-zinc-800 rounded-lg shadow-sm"
+            >
+              <label className="flex items-center gap-2 flex-1 cursor-pointer">
                 <input
                   type="checkbox"
                   checked={item.completed}
                   onChange={() => toggleComplete(item._id)}
-                  style={styles.checkbox}
+                  className="w-5 h-5 text-blue-500"
                 />
                 <span
-                  style={{
-                    ...styles.taskText,
-                    textDecoration: item.completed ? "line-through" : "none",
-                    color: item.completed ? "#aaa" : "#333",
-                  }}
+                  className={`text-sm sm:text-base break-words ${
+                    item.completed
+                      ? "line-through text-zinc-400"
+                      : "text-zinc-900 dark:text-white"
+                  }`}
                 >
                   {item.text}
                 </span>
               </label>
               <button
                 onClick={() => deleteTask(item._id)}
-                style={styles.deleteBtn}
+                className="text-red-500 hover:text-red-700 text-lg"
               >
                 🗑️
               </button>
@@ -101,110 +109,16 @@ const TodoList = () => {
         </ul>
 
         {tasks.length > 0 && (
-          <button onClick={clearAll} style={styles.clearBtn}>
+          <button
+            onClick={clearAll}
+            className="mt-4 w-full py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition"
+          >
             🧹 Clear All
           </button>
         )}
       </div>
     </div>
   );
-};
-
-const styles = {
-  wrapper: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    padding: "30px",
-    fontFamily: "'Segoe UI', sans-serif",
-  },
-  container: {
-    width: "400px",
-    background: "rgba(255, 255, 255, 0.8)",
-    backdropFilter: "blur(10px)",
-    boxShadow: "0 8px 24px rgba(0, 0, 0, 0.1)",
-    borderRadius: "16px",
-    padding: "30px 20px",
-    textAlign: "center",
-  },
-  heading: {
-    marginBottom: "20px",
-    fontSize: "26px",
-    fontWeight: "bold",
-    color: "#333",
-  },
-  inputArea: {
-    display: "flex",
-    justifyContent: "space-between",
-    marginBottom: "20px",
-  },
-  input: {
-    flex: 1,
-    padding: "10px",
-    fontSize: "16px",
-    border: "1px solid #ccc",
-    borderRadius: "8px",
-    outline: "none",
-    marginRight: "10px",
-  },
-  addButton: {
-    padding: "10px 14px",
-    fontSize: "18px",
-    borderRadius: "8px",
-    border: "none",
-    background: "#4caf50",
-    color: "white",
-    cursor: "pointer",
-    transition: "0.2s",
-  },
-  taskList: {
-    listStyle: "none",
-    padding: 0,
-  },
-  taskItem: {
-    backgroundColor: "#fff",
-    marginBottom: "10px",
-    padding: "10px 12px",
-    borderRadius: "8px",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "space-between",
-    boxShadow: "0 1px 4px rgba(0, 0, 0, 0.05)",
-    transition: "transform 0.1s ease-in-out",
-  },
-  label: {
-    display: "flex",
-    alignItems: "center",
-    gap: "10px",
-    flex: 1,
-    cursor: "pointer",
-  },
-  checkbox: {
-    transform: "scale(1.2)",
-    cursor: "pointer",
-  },
-  taskText: {
-    fontSize: "16px",
-    wordBreak: "break-word",
-  },
-  deleteBtn: {
-    background: "transparent",
-    border: "none",
-    cursor: "pointer",
-    fontSize: "18px",
-    color: "#ff4444",
-  },
-  clearBtn: {
-    marginTop: "15px",
-    background: "#ff4444",
-    color: "white",
-    border: "none",
-    borderRadius: "10px",
-    padding: "8px 16px",
-    fontSize: "15px",
-    cursor: "pointer",
-    transition: "0.3s",
-  },
 };
 
 export default TodoList;

@@ -1,19 +1,18 @@
-import { X } from "lucide-react"
-import PomodoroTimer from "../components/PomodoroTimer"
-import TodoList from "../components/TodoList"
+import { X, Edit } from "lucide-react";
+
+import PomodoroTimer from "../components/PomodoroTimer";
+import TodoList from "../components/TodoList";
 import { useEffect, useState } from "react";
 import StreakDisplay from "../components/streakDisplay";
 import StatsDashboard from "../components/StatsDashboard";
 
-function Dashboard({ onClose }) {
-  const [user, setUser] = useState("Guest");
+function Dashboard({ onClose, user, setUser }) {
   const [isVisible, setIsVisible] = useState(false);
 
   const toggleVisibility = (e) => {
     setIsVisible(!isVisible);
-    localStorage.setItem("username", e.target.value);
+    localStorage.setItem("username", user);
   };
-
   useEffect(() => {
     const storedUser = localStorage.getItem("username");
     if (storedUser) {
