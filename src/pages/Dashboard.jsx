@@ -3,6 +3,8 @@ import { X, Edit } from "lucide-react";
 import PomodoroTimer from "../components/PomodoroTimer";
 import TodoList from "../components/TodoList";
 import { useEffect, useState } from "react";
+import StatsDashboard from "../components/StatsDashboard";
+import StreakDisplay from "../components/StreakDisplay";
 
 function Dashboard({ onClose, user, setUser }) {
   const [isVisible, setIsVisible] = useState(false);
@@ -49,6 +51,8 @@ function Dashboard({ onClose, user, setUser }) {
       <div className="grid gap-6 md:grid-cols-2">
         <TodoList />
         <PomodoroTimer />
+        <StatsDashboard username={user} />
+        <StreakDisplay username={user} />
       </div>
     </div>
   );
