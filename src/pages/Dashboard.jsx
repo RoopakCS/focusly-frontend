@@ -4,18 +4,12 @@ import PomodoroTimer from "../components/PomodoroTimer";
 import TodoList from "../components/TodoList";
 import { useEffect, useState } from "react";
 
-function Dashboard({ onClose }) {
-  const [user, setUser] = useState("Guest");
+function Dashboard({ onClose, user, setUser }) {
   const [isVisible, setIsVisible] = useState(false);
   const toggleVisibility = () => {
     setIsVisible(!isVisible);
-    localStorage.setItem("username", e.target.value);
+    localStorage.setItem("username", user);
   };
-
-  useEffect(() => {
-    localStorage.getItem("username") &&
-      setUser(localStorage.getItem("username"));
-  }, []);
 
   return (
     <div className="fixed inset-0 z-40 bg-white dark:bg-zinc-900 border dark:border-zinc-700 shadow-2xl rounded-2xl m-4 p-6 overflow-y-auto transition-all duration-300">
@@ -39,12 +33,16 @@ function Dashboard({ onClose }) {
         </button>
       </div>
 
-      <button
-        onClick={onClose}
-        className="absolute top-4 right-4 text-gray-500 hover:text-white transition"
-      >
-        <X className="w-6 h-6" />
-      </button>
+      {
+        onClose &&
+        <button
+          onClick={onClose}
+          className="absolute top-4 right-4 text-gray-500 hover:text-white transition"
+        >
+          <X className="w-6 h-6" />
+        </button>
+
+      }
 
       <h1 className="text-3xl font-bold text-white mb-6">Dashboard</h1>
 

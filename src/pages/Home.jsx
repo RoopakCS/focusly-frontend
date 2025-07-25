@@ -23,32 +23,42 @@ function Home() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center h-screen">
-      <input
-        type="text"
-        placeholder="Room Name"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-        className="p-2 mb-4 border rounded"
-      />
-      <label>
+    <div className="h-screen flex items-center justify-center bg-background text-foreground px-4">
+      <div className="w-full max-w-md bg-white dark:bg-gray-900 shadow-xl rounded-2xl p-8 space-y-6 border border-gray-200 dark:border-gray-700 transition-all">
+        <h1 className="text-sm font-bold text-center text-gray-800 dark:text-white">Join or Create a Room</h1>
+
         <input
-          type="checkbox"
-          checked={isPrivate}
-          onChange={() => setIsPrivate(!isPrivate)}
-          className="mr-2"
+          type="text"
+          placeholder="Enter Room Name"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          className="w-full p-3 rounded-xl border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
-        Private Room
-      </label>
-      <button className="bg-blue-500 text-white px-4 py-2 rounded" onClick={joinRoom}>
-        Join Room
-      </button>
-      <button
-        onClick={handleCreateRoom}
-        className="mt-4 px-4 py-2 bg-blue-500 text-white rounded"
-      >
-        Create Room
-      </button>
+
+        <label className="flex items-center space-x-2 text-gray-700 dark:text-gray-300">
+          <input
+            type="checkbox"
+            checked={isPrivate}
+            onChange={() => setIsPrivate(!isPrivate)}
+            className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-600"
+          />
+          <span>Private Room</span>
+        </label>
+
+        <button
+          className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-xl transition"
+          onClick={joinRoom}
+        >
+          Join Room
+        </button>
+
+        <button
+          className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-4 rounded-xl transition"
+          onClick={handleCreateRoom}
+        >
+          Create Room
+        </button>
+      </div>
     </div>
   )
 }

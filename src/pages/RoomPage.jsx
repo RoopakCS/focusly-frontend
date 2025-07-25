@@ -3,16 +3,18 @@ import Peer from 'peerjs'
 import { socket } from "../socket"
 import SERVER_URL from '../SERVER_URL'
 import { useParams } from 'react-router-dom'
+import { CircleChevronRight, MessageCircle } from "lucide-react";
 
 import ChatBox from '../components/ChatBox'
 
-export default function RoomPage() {
+export default function RoomPage({ user }) {
   const { roomId } = useParams()
   const [peers, setPeers] = useState({})
   const myVideo = useRef(null)
   const videosRef = useRef(null)
   const peerRef = useRef(null)
-  const streamRef = useRef(null) // fix: store stream here
+  const streamRef = useRef(null)
+  const [chatOpen, setChatOpen] = useState(false);
 
   useEffect(() => {
     //const videoContainer = videosRef.current
@@ -29,7 +31,7 @@ export default function RoomPage() {
         //  path: "/",
         //  secure: true,
         //})
-        
+
         const peer = new Peer(undefined, {
           host: "localhost",
           port: 9000,
@@ -98,28 +100,64 @@ export default function RoomPage() {
   function addVideo(stream, id) {
     if (peers[id]) return
 
+    const videoWrapper = document.createElement("div")
+    videoWrapper.className = "w-full h-full max-w-160 max-h-106 rounded-lg overflow-hidden bg-black"
+
     const video = document.createElement("video")
     video.id = id
     video.srcObject = stream
     video.playsInline = true
     video.autoplay = true
-    video.width = 200
+    video.className = "w-full h-full object-cover rounded-lg shadow-md"
 
-    videosRef.current?.appendChild(video)
+    videoWrapper.appendChild(video)
+    videosRef.current?.appendChild(videoWrapper)
 
     setPeers(prev => ({ ...prev, [id]: video }))
-    console.log(videosRef)
   }
 
   return (
     <>
-      <div>Room: {roomId}</div>
-      {
-        <video ref={myVideo} autoPlay playsInline muted width="200" style={{ transform: "scaleX(-1)" }} />
-      }
-      <div ref={videosRef}></div>
+      <div className="flex h-screen bg-gray-900 text-gray-100">
+        <div className="flex-1 p-4 overflow-auto flex flex-col items-center">
+          <div className="mb-4 h-1/20 text-lg font-semibold">Room: {roomId}</div>
+          <video
+            ref={myVideo}
+            autoPlay
+            playsInline
+            muted
+            width="200"
+            className="absolute bottom-5 right-5 rounded-lg shadow-lg mb-4 transform scale-x-[-1]"
+          />
+          <div
+            ref={videosRef}
+            className="grid w-full h-19/20 p-2 gap-2
+         grid-cols-[repeat(auto-fit,_minmax(22em,_1fr))]
+         auto-rows-[minmax(15em,_1fr)] place-items-center
+            "
+          />
+        </div>
 
-      <ChatBox roomId={roomId} />
+        <div
+          className={`fixed top-0 right-0 h-screen bg-gray-800 shadow-2xl transition-transform duration-300 ease-in-out
+            ${chatOpen ? "translate-x-0" : "translate-x-full"}
+          `}
+          style={{ width: "350px", maxWidth: "100vw" }}
+        >
+          <div className="flex justify-between items-center p-4 border-b border-gray-700 h-1/10">
+            <h2 className="text-xl font-bold">Chat</h2>
+            <button
+              onClick={() => setChatOpen(prev => !prev)}
+              className={`absolute bottom-1/2 ${chatOpen ? "right-15/16" : "right-23/24 transform scale-x-[-1]"} z-10 w-8 h-8 rounded-full bg-indigo-600 hover:bg-indigo-700 flex items-center justify-center text-white`}
+              aria-label="Close Chat"
+            >
+              <CircleChevronRight className='w-6 h-6' />
+            </button>
+          </div>
+
+          <ChatBox user={user} roomId={roomId} />
+        </div>
+      </div>
     </>
   )
 }
