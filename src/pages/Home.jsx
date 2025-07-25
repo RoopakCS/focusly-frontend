@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import api from "../api/api"
-import TodoList from "../components/TodoList"
 import PublicRooms from "../components/PublicRooms"
 
 function Home({password, setPassword}) {
