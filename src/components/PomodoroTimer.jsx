@@ -174,5 +174,4 @@ const styles = {
 
 };
 
-
 export default PomodoroTimer;

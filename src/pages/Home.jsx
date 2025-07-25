@@ -2,6 +2,7 @@ import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import api from "../api/api"
 import TodoList from "../components/TodoList"
+import StreakDisplay from "../components/streakDisplay"
 
 function Home() {
   const [name, setName] = useState("")
