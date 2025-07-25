@@ -4,10 +4,12 @@ import { socket } from "../socket"
 import SERVER_URL from '../SERVER_URL'
 import { useParams } from 'react-router-dom'
 import { CircleChevronRight, MessageCircle } from "lucide-react";
+import { useNavigate } from "react-router-dom"
 
 import ChatBox from '../components/ChatBox'
+import api from '../api/api'
 
-export default function RoomPage({ user }) {
+export default function RoomPage({ user, password }) {
   const { roomId } = useParams()
   const [peers, setPeers] = useState({})
   const myVideo = useRef(null)
@@ -15,96 +17,119 @@ export default function RoomPage({ user }) {
   const peerRef = useRef(null)
   const streamRef = useRef(null)
   const [chatOpen, setChatOpen] = useState(false);
+  const [roomName, setRoomName] = useState("")
 
+  const navigate = useNavigate()
   useEffect(() => {
     //const videoContainer = videosRef.current
+    const joinRoom = async () => {
+      try {
+        const res = await api.post("/api/rooms/join", { code: roomId, password })
+        setRoomName(res.data.name)
+        console.log("Joined room:", res.data)
 
-    navigator.mediaDevices.getUserMedia({ video: true, audio: true })
-      .then(stream => {
-        streamRef.current = stream
-        myVideo.current.srcObject = stream
-        myVideo.current.muted = true
+        navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+          .then(stream => {
+            streamRef.current = stream
+            myVideo.current.srcObject = stream
+            myVideo.current.muted = true
 
-        //const peer = new Peer(undefined, {
-        //  host: "liabilities-pre-pushing-textiles.trycloudflare.com",
-        //  port: 443,
-        //  path: "/",
-        //  secure: true,
-        //})
+            //const peer = new Peer(undefined, {
+            //  host: "liabilities-pre-pushing-textiles.trycloudflare.com",
+            //  port: 443,
+            //  path: "/",
+            //  secure: true,
+            //})
 
-        const peer = new Peer(undefined, {
-          host: "localhost",
-          port: 9000,
-          path: "/",
-          secure: false,
-        })
+            const peer = new Peer(undefined, {
+              host: "localhost",
+              port: 9000,
+              path: "/",
+              secure: false,
+            })
 
-        peerRef.current = peer
+            peerRef.current = peer
 
-        //debugging
-        console.log("Peer object created", peer);
+            //debugging
+            console.log("Peer object created", peer);
 
-        peer.on("error", (err) => {
-          console.error("PeerJS Error:", err);
-        });
-
-        peer.on("open", id => {
-          console.log("Yeppa peer is initialed")
-          socket.emit("joinRoom", { roomId, peerId: id })
-        })
-
-        //When user join the room
-        peer.on("call", call => {
-          console.log("A user joined!!! peer.on call", call.peer);
-          call.answer(stream);
-          call.once("stream", userVideoStream => {
-            console.log("Stream received from peer:", call.peer);
-            addVideo(userVideoStream, call.peer);
-          });
-        });
-
-        //When user already in the room
-        socket.on("user-connect", peerId => {
-          if (peerId !== peer.id) {
-            console.log("A user called!!! socket.on user-connect");
-            const call = peer.call(peerId, stream);
-            call.once("stream", userVideoStream => {
-              console.log("Calling peer and got stream:", peerId);
-              addVideo(userVideoStream, peerId);
+            peer.on("error", (err) => {
+              console.error("PeerJS Error:", err);
             });
-          }
-        });
 
-        peer.on("close", () => {
-          console.log("closed a video")
-          const vid = document.getElementById(peer.id);
-          if (vid) vid.remove();
-        });
+            peer.on("open", id => {
+              console.log("Yeppa peer is initialed")
+              socket.emit("joinRoom", { roomId, peerId: id })
+            })
 
-        socket.on("user-disconnected", peerId => {
-          console.log("user is gone mate")
-          const vid = document.getElementById(peerId);
-          if (vid) vid.remove();
-        });
+            //When user join the room
+            peer.on("call", call => {
+              console.log("A user joined!!! peer.on call", call.peer);
+              call.answer(stream);
+              call.once("stream", userVideoStream => {
+                console.log("Stream received from peer:", call.peer);
+                addVideo(userVideoStream, call.peer);
+              });
+            });
 
-      })
-      .catch(err => console.error("Failed to get user media:", err))
+            //When user already in the room
+            socket.on("user-connect", peerId => {
+              if (peerId !== peer.id) {
+                console.log("A user called!!! socket.on user-connect");
+                const call = peer.call(peerId, stream);
+                call.once("stream", userVideoStream => {
+                  console.log("Calling peer and got stream:", peerId);
+                  addVideo(userVideoStream, peerId);
+                });
+              }
+            });
 
-    return () => {
-      socket.disconnect()
-      if (peerRef.current)
-        peerRef.current.destroy()
+            peer.on("close", () => {
+              console.log("closed a video")
+              const vid = document.getElementById(peer.id);
+              if (vid) vid.remove();
+            });
+
+            socket.on("user-disconnected", peerId => {
+              console.log("user is gone mate")
+              const vid = document.getElementById(peerId);
+              if (vid) vid.remove();
+            });
+
+          })
+          .catch(err => console.error("Failed to get user media:", err))
+
+        return () => {
+          socket.disconnect()
+          if (peerRef.current)
+            peerRef.current.destroy()
+        }
+
+      } catch (err) {
+        if (err.response && err.response.status === 404) {
+          alert("❌ Wrong credentials or room not found!")
+          navigate("/")
+
+        } else {
+          alert("⚠️ Something went wrong.")
+        }
+
+        return
+      }
+
     }
+    joinRoom()
+
   }, [])
 
   function addVideo(stream, id) {
     if (peers[id]) return
 
     const videoWrapper = document.createElement("div")
+    videoWrapper.id = id
     videoWrapper.className = "w-full h-full max-w-160 max-h-106 rounded-lg overflow-hidden bg-black"
 
     const video = document.createElement("video")
-    video.id = id
     video.srcObject = stream
     video.playsInline = true
     video.autoplay = true
@@ -120,7 +145,7 @@ export default function RoomPage({ user }) {
     <>
       <div className="flex h-screen bg-gray-900 text-gray-100">
         <div className="flex-1 p-4 overflow-auto flex flex-col items-center">
-          <div className="mb-4 h-1/20 text-lg font-semibold">Room: {roomId}</div>
+          <div className="mb-4 h-1/20 text-lg font-semibold">Room: {roomName}</div>
           <video
             ref={myVideo}
             autoPlay
