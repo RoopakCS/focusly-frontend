@@ -54,7 +54,7 @@ const TodoList = () => {
 
   return (
     <div className="flex items-center justify-center w-full">
-      <div className="w-full max-w-md bg-white dark:bg-zinc-900 bg-opacity-80 backdrop-blur-md shadow-xl rounded-2xl p-6">
+      <div className="w-full max-w-md bg-white dark:bg-zinc-900 bg-opacity-80 backdrop-blur-md shadow-xl rounded-2xl p-6 transition-transform duration-200 hover:scale-102 hover:shadow-xl">
         <h2 className="text-2xl font-bold text-center mb-4 text-zinc-800 dark:text-white">
           ✨ To-Do List
         </h2>

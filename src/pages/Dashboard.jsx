@@ -25,11 +25,11 @@ function Dashboard({ onClose, user, setUser }) {
             value={user}
           />
         ) : (
-          <h1 className="text-xl text-white">{user}</h1>
+          <h1 className="text-xl text-white" onClick={toggleVisibility}>{user}</h1>
         )}
         <button
           onClick={toggleVisibility}
-          className="ml-2 text-sm text-blue-400 hover:text-blue-200"
+          className="ml-2 text-sm text-blue-400 hover:text-blue-200 p-1"
         >
           {isVisible ? "Update Username" : <Edit className="w-6 h-6" />}
         </button>
@@ -39,21 +39,21 @@ function Dashboard({ onClose, user, setUser }) {
         onClose &&
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 text-gray-500 hover:text-white transition"
+          className="fixed top-10 right-10 bg-white shadow-md p-2 rounded-full hover:bg-gray-100"
         >
           <X className="w-6 h-6" />
         </button>
 
       }
 
-      <h1 className="text-3xl font-bold text-white mb-6">Dashboard</h1>
+      <h1 className="text-3xl font-bold text-white mb-6 col-span-2">Dashboard</h1>
 
       <div className="grid gap-6 md:grid-cols-2">
         <TodoList />
         <PomodoroTimer />
         <StatsDashboard username={user} />
-        <StreakDisplay username={user} />
       </div>
+      <StreakDisplay username={user} />
     </div>
   );
 }

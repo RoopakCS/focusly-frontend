@@ -38,9 +38,9 @@ export default function StatsDashboard({ username }) {
   }));
 
   return (
-    <div className="p-6 max-w-5xl mx-auto grid gap-8 md:grid-cols-2">
+    <div className="p-6 max-w-5xl mx-auto grid gap-8 col-span-1 md:col-span-2">
       {/* Totals */}
-      <div className="bg-white rounded-2xl shadow p-6 col-span-2 text-center">
+      <div className="bg-zinc-900 shadow-xl rounded-2xl p-6 col-span-2 text-center transition-transform duration-200 hover:scale-110 hover:shadow-xl">
         <h2 className="text-2xl font-semibold mb-4">🧠 Weekly Focus Summary</h2>
         <div className="flex justify-around text-lg">
           <span>📅 Today: <strong>{stats.today} mins</strong></span>
@@ -50,7 +50,7 @@ export default function StatsDashboard({ username }) {
       </div>
 
       {/* Pie Chart */}
-      <div className="bg-white rounded-2xl shadow p-4">
+      <div className="bg-zinc-900 rounded-2xl shadow-xl p-4 transition-transform duration-200 hover:scale-105 hover:shadow-xl">
         <h3 className="text-xl font-semibold text-center mb-2">By Type</h3>
         <ResponsiveContainer width="100%" height={300}>
           <PieChart>
@@ -76,7 +76,7 @@ export default function StatsDashboard({ username }) {
       </div>
 
       {/* Bar Chart */}
-      <div className="bg-white rounded-2xl shadow p-4">
+      <div className="bg-zinc-900 rounded-2xl shadow-xl p-4 transition-transform duration-200 hover:scale-105 hover:shadow-xl">
         <h3 className="text-xl font-semibold text-center mb-2">By Day</h3>
         <ResponsiveContainer width="100%" height={300}>
           <BarChart data={barData}>

@@ -21,28 +21,12 @@ const StreakDisplay = ({ username }) => {
     updateStreak();
   }, [username]);
 
-  const containerStyle = {
-    position: "fixed",
-    bottom : "20px",
-    right: "1px",
-    backgroundColor: "light brown",
-    padding: "10px 10px",
-    borderRadius: "9px",
-    boxShadow: "0px 4px 10px rgba(255, 255, 255, 0.1)",
-    fontFamily: "Arial, sans-serif",
-    zIndex: 1000,
-    fontSize: "14px",
-    fontWeight: "bold",
-    color: "#333",
-    border: "4px solid #000000ff", // orange
-  };
-
   return (
-    <div style={containerStyle}>
+    <div className="fixed bottom-6 right-6 z-50 px-4 py-2 rounded-xl shadow-lg  bg-zinc-900 text-white font-semibold text-sm transition-transform duration-200 hover:scale-110 hover:shadow-xl">
       {error
         ? error
         : streak !== null
-        ? `🔥 ${streak} Day Streak`
+        ? `🔥 ${streak}`
         : "Loading..."}
     </div>
   );

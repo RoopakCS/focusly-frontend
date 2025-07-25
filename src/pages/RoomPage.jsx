@@ -20,6 +20,7 @@ export default function RoomPage({ user, password }) {
   const [roomName, setRoomName] = useState("")
 
   const navigate = useNavigate()
+
   useEffect(() => {
     //const videoContainer = videosRef.current
     const joinRoom = async () => {
@@ -57,7 +58,11 @@ export default function RoomPage({ user, password }) {
             peer.on("open", id => {
               console.log("Yeppa peer is initialed")
               api.post("/api/rooms/addUser", { code: roomId, user: localStorage.getItem("username") })
-              socket.emit("joinRoom", { roomId, peerId: id })
+              socket.emit("joinRoom", {
+                roomId,
+                peerId: id,
+                username: localStorage.getItem("username"),
+              })
             })
 
             //When user join the room
@@ -117,8 +122,31 @@ export default function RoomPage({ user, password }) {
 
     }
     joinRoom()
-
   }, [])
+
+    useEffect(() => {
+      const handleBeforeUnload = () => {
+        api.post("/api/rooms/removeUser", { code: roomId, user: localStorage.getItem("username") })
+        socket.disconnect()
+      }
+
+      window.addEventListener("beforeunload", handleBeforeUnload)
+
+      return () => {
+        window.removeEventListener("beforeunload", handleBeforeUnload)
+      }
+    }, [roomId])
+
+
+    useEffect(() => {
+      const interval = setInterval(() => {
+        socket.emit("heartbeat", {
+          user: localStorage.getItem("username"),
+        })
+      }, 30000) // 30s
+
+      return () => clearInterval(interval)
+    }, [])
 
   function addVideo(stream, id) {
     if (peers[id]) return

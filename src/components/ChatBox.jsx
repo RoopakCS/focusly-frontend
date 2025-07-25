@@ -61,7 +61,8 @@ const ChatBox = ({ user = "Guest", roomId = "general-room" }) => {
           placeholder="Type a message..."
           className="flex-grow max-w-47 bg-gray-700 text-gray-200 placeholder-gray-400 rounded-lg px-4 py-2 mr-3 focus:outline-none focus:ring-2 focus:ring-indigo-500"
         />
-        <button
+        <button 
+          className="flex-grow w-20 bg-gray-700 text-gray-200 rounded-lg px-4 py-2 mr-3 focus:outline-none focus:ring-2 focus:ring-indigo-500"
           onClick={sendMessage}
           aria-label="Send message"
         >

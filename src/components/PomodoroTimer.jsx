@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import api from "../api/api";
 
 const PomodoroTimer = () => {
   const [workMinutes, setWorkMinutes] = useState(25);
@@ -15,20 +16,37 @@ const PomodoroTimer = () => {
 
   useEffect(() => {
     let timer = null;
+
     if (isRunning) {
       timer = setInterval(() => {
         setSecondsLeft((prev) => {
           if (prev === 0) {
             switchAudio.current.play();
+
+            if (!isBreak) {
+              const duration = workMinutes;
+              const type = "Pomodoro";
+              const username = localStorage.getItem("username") ?? "Guest"
+              api.post("/api/stats", {
+                username,
+                duration,
+                type,
+              }).catch((err) => {
+                console.error("Failed to log session:", err);
+              });
+            }
+
             const nextDuration = isBreak ? workMinutes * 60 : breakMinutes * 60;
             totalSeconds.current = nextDuration;
             setIsBreak((prev) => !prev);
+
             return nextDuration;
           }
           return prev - 1;
         });
       }, 1000);
     }
+
     return () => clearInterval(timer);
   }, [isRunning, isBreak, workMinutes, breakMinutes]);
 
@@ -47,7 +65,7 @@ const PomodoroTimer = () => {
     setIsStarted(true);
     setIsRunning(true);
     setIsBreak(false);
-    endAudio.current.play().catch(() => {});
+    endAudio.current.play().catch(() => { });
   };
 
   const handleStartPause = () => {
@@ -55,7 +73,7 @@ const PomodoroTimer = () => {
   };
 
   const handleReset = () => {
-    endAudio.current.play().catch(() => {});
+    endAudio.current.play().catch(() => { });
     setIsRunning(false);
     setIsBreak(false);
     setIsStarted(false);
@@ -69,7 +87,7 @@ const PomodoroTimer = () => {
   };
 
   return (
-    <div className="max-w-sm mx-auto mt-10 p-6 bg-white dark:bg-zinc-900 shadow-xl rounded-2xl text-center">
+    <div className="max-w-sm mx-auto mt-10 p-6 bg-white dark:bg-zinc-900 shadow-xl rounded-2xl text-center transition-transform duration-200 hover:scale-105 hover:shadow-xl">
       <h2 className="text-2xl font-bold mb-4 text-zinc-800 dark:text-white">
         🍅 Pomodoro Timer
       </h2>
