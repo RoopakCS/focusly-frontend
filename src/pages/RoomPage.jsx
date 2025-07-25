@@ -3,7 +3,7 @@ import Peer from 'peerjs'
 import { socket } from "../socket"
 import SERVER_URL from '../SERVER_URL'
 import { useParams } from 'react-router-dom'
-import { CircleChevronRight, MessageCircle } from "lucide-react";
+import { CircleChevronRight, MessageCircle, LogOut } from "lucide-react";
 import { useNavigate } from "react-router-dom"
 
 import ChatBox from '../components/ChatBox'
@@ -50,15 +50,13 @@ export default function RoomPage({ user, password }) {
 
             peerRef.current = peer
 
-            //debugging
-            console.log("Peer object created", peer);
-
             peer.on("error", (err) => {
               console.error("PeerJS Error:", err);
             });
 
             peer.on("open", id => {
               console.log("Yeppa peer is initialed")
+              api.post("/api/rooms/addUser", { code: roomId, user: localStorage.getItem("username") })
               socket.emit("joinRoom", { roomId, peerId: id })
             })
 
@@ -141,6 +139,11 @@ export default function RoomPage({ user, password }) {
     setPeers(prev => ({ ...prev, [id]: video }))
   }
 
+  const leaveRoom = () => {
+    api.post("/api/rooms/removeUser", { code: roomId, user: localStorage.getItem("username") })
+    navigate("/");
+  };
+
   return (
     <>
       <div className="flex h-screen bg-gray-900 text-gray-100">
@@ -183,6 +186,12 @@ export default function RoomPage({ user, password }) {
           <ChatBox user={user} roomId={roomId} />
         </div>
       </div>
+      <button
+        onClick={leaveRoom}
+        className="fixed top-4 left-4 z-50 bg-white shadow-md p-2 rounded-full hover:bg-gray-100"
+      >
+        <LogOut className="w-5 h-5" />
+      </button>
     </>
   )
 }

@@ -10,11 +10,15 @@ const ChatBox = ({ user = "Guest", roomId = "general-room" }) => {
   const [showEmoji, setShowEmoji] = useState(false);
   const messagesEndRef = useRef(null);
 
-  useEffect(() => {
+  function updateMessage() {
     api.get(`/api/messages/${roomId}`).then((res) => {
       setMessages(Array.isArray(res.data.chat) ? res.data.chat : []);
     });
+  }
 
+  useEffect(() => {
+    updateMessage()
+    socket.on("new-message", updateMessage)
     return () => {
       socket.off("receiveMessage");
     };
