@@ -5,7 +5,7 @@ import path from 'path'
 import SERVER_URL from './src/SERVER_URL'
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [tailwindcss(), react()],
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
