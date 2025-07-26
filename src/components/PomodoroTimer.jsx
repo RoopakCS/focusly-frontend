@@ -26,7 +26,7 @@ const PomodoroTimer = () => {
             if (!isBreak) {
               const duration = workMinutes;
               const type = "Pomodoro";
-              const username = localStorage.getItem("username") ?? "Guest"
+              const username = localStorage.getItem("username")
               api.post("/api/stats", {
                 username,
                 duration,
