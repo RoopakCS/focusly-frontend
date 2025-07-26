@@ -1,10 +1,10 @@
 // src/components/StatsDashboard.jsx
 import { useEffect, useState } from "react";
-import axios from "axios";
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid,
   PieChart, Pie, Cell, Legend, ResponsiveContainer
 } from "recharts";
+import api from "../api/api";
 
 const COLORS = ["#4ade80", "#60a5fa", "#facc15", "#f87171", "#a78bfa"];
 
@@ -16,7 +16,7 @@ export default function StatsDashboard({ username }) {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const res = await axios.get(`http://localhost:3000/api/stats/${username}`);
+        const res = await api.get(`/api/stats/${username}`);
         setStats(res.data);
       } catch (err) {
         console.error("Failed to fetch stats:", err);

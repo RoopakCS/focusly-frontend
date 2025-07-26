@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import api from "../api/api";
 
 const PublicRooms = () => {
-  const [publicRooms, setPublicRooms] = useState(null);
+  const [publicRooms, setPublicRooms] = useState([]);
 
   useEffect(() => {
     api.get("/api/rooms/publicrooms").then((res) => {

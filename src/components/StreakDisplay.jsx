@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import api from "../api/api";
 
 const StreakDisplay = ({ username }) => {
   const [streak, setStreak] = useState(null);
@@ -7,11 +8,8 @@ const StreakDisplay = ({ username }) => {
   useEffect(() => {
     const updateStreak = async () => {
       try {
-        const res = await fetch(`http://localhost:3000/api/streak/update/${username}`, {
-          method: "POST",
-        });
-        const data = await res.json();
-        setStreak(data.streak);
+        const data = await api.post(`/api/streak/update/${username}`);
+        setStreak(data.data.streak);
       } catch (err) {
         console.error("Failed to update streak", err);
         setError("Error");

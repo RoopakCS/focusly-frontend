@@ -72,7 +72,9 @@ function Home({password, setPassword}) {
           </button>
         </div>
       </div>
-      <PublicRooms />
+      {
+      //<PublicRooms />
+      }
     </>
   )
 }

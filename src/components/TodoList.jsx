@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../api/api";
 
-const API_URL = "http://localhost:3000/api/todo";
+const API_URL = "/api/todo";
 
 const TodoList = () => {
   const [task, setTask] = useState("");
   const [tasks, setTasks] = useState([]);
 
   useEffect(() => {
-    axios
+      api
       .get(API_URL)
       .then((res) => setTasks(res.data))
       .catch((err) => console.error("Fetch error:", err));
@@ -16,7 +16,7 @@ const TodoList = () => {
 
   const addTask = () => {
     if (task.trim() === "") return;
-    axios
+    api
       .post(API_URL, { text: task })
       .then((res) => {
         setTasks([...tasks, res.data]);
@@ -27,7 +27,7 @@ const TodoList = () => {
 
   const toggleComplete = (id) => {
     const todo = tasks.find((t) => t._id === id);
-    axios
+   api 
       .patch(`${API_URL}/${id}`, { completed: !todo.completed })
       .then(() =>
         setTasks(
@@ -40,14 +40,14 @@ const TodoList = () => {
   };
 
   const deleteTask = (id) => {
-    axios
+    api
       .delete(`${API_URL}/${id}`)
       .then(() => setTasks(tasks.filter((t) => t._id !== id)))
       .catch((err) => console.error("Delete error", err));
   };
 
   const clearAll = () => {
-    Promise.all(tasks.map((t) => axios.delete(`${API_URL}/${t._id}`)))
+    Promise.all(tasks.map((t) => api.delete(`${API_URL}/${t._id}`)))
       .then(() => setTasks([]))
       .catch((err) => console.error("Clear all errors:", err));
   };
