@@ -73,7 +73,7 @@ function Home({password, setPassword}) {
         </div>
       </div>
       {
-      //<PublicRooms />
+      <PublicRooms />
       }
     </>
   )
