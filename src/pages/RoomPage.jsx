@@ -19,6 +19,8 @@ export default function RoomPage({ user, password }) {
   const streamRef = useRef(null)
   const [chatOpen, setChatOpen] = useState(false);
   const [roomName, setRoomName] = useState("")
+  const [joinTime, setJoinTime] = useState(null);
+
 
   const chatRef = useRef()
 
@@ -129,6 +131,11 @@ export default function RoomPage({ user, password }) {
   }, [])
 
     useEffect(() => {
+      const now = Date.now();
+      setJoinTime(now);
+    }, []);
+
+    useEffect(() => {
       const handleBeforeUnload = () => {
         api.post("/api/rooms/removeUser", { code: roomId, user: localStorage.getItem("username") })
         socket.disconnect()
@@ -172,7 +179,6 @@ export default function RoomPage({ user, password }) {
   }
 
 const leaveRoom = () => {
-  // 1. Close all PeerJS connections
   if (peerRef.current?.connections) {
     Object.values(peerRef.current.connections).forEach(conns => {
       conns.forEach(conn => {
@@ -181,26 +187,39 @@ const leaveRoom = () => {
     });
   }
 
-  // 2. Stop media tracks
   if (streamRef.current) {
     streamRef.current.getTracks().forEach(track => track.stop());
   }
 
-  // 3. Destroy PeerJS instance
   if (peerRef.current && !peerRef.current.destroyed) {
     peerRef.current.destroy();
   }
 
-  // 4. Disconnect socket.io
   socket.disconnect();
 
-  // 5. Call backend to remove user
+  const username = localStorage.getItem("username");
+
+  if (joinTime) {
+    const endTime = Date.now();
+    const durationMs = endTime - joinTime;
+    const durationMinutes = Math.floor(durationMs / 60000);
+
+    try {
+      api.post("/api/stats", {
+        username,
+        duration: durationMinutes,
+        type: "Study Room",
+      });
+    } catch (err) {
+      console.error("Failed to log Study Room session:", err);
+    }
+  }
+
   api.post("/api/rooms/removeUser", {
     code: roomId,
     user: localStorage.getItem("username"),
   });
 
-  // 6. Navigate to home
   navigate("/");
 };
 
