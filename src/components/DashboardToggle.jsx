@@ -6,7 +6,7 @@ function DashboardToggle({user, setUser}) {
   const [open, setOpen] = useState(false)
 
   return (
-    <>
+    <div className="z-50">
       {
         open ? 
           <Dashboard onClose={() => setOpen(false)} user={user} setUser={setUser} /> 
@@ -19,7 +19,7 @@ function DashboardToggle({user, setUser}) {
           </button>
 
       }
-    </>
+    </div>
   )
 }
 

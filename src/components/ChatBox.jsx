@@ -1,10 +1,10 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useImperativeHandle, forwardRef } from "react";
 import { Send } from "lucide-react";
 import { socket } from "../socket";
 import { Picker } from "emoji-mart";
 import api from "../api/api";
 
-const ChatBox = ({ user = "Guest", roomId = "general-room" }) => {
+const ChatBox = forwardRef(({ user = "Guest", roomId = "general-room" }, ref) => {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [showEmoji, setShowEmoji] = useState(false);
@@ -27,6 +27,13 @@ const ChatBox = ({ user = "Guest", roomId = "general-room" }) => {
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
+
+
+  useImperativeHandle(ref, () => ({
+      addSystemMessage(user) {
+        setMessages(prev => [...prev, { user , msg: "Joined the chat" }]);
+      },
+    }));
 
   const sendMessage = () => {
     if (!input.trim()) return;
@@ -71,6 +78,7 @@ const ChatBox = ({ user = "Guest", roomId = "general-room" }) => {
       </div>
     </div>
   );
-};
+}
+);
 
 export default ChatBox;

@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom"
 
 import ChatBox from '../components/ChatBox'
 import api from '../api/api'
+import RoomHeader from '../components/RoomHeader'
 
 export default function RoomPage({ user, password }) {
   const { roomId } = useParams()
@@ -18,6 +19,8 @@ export default function RoomPage({ user, password }) {
   const streamRef = useRef(null)
   const [chatOpen, setChatOpen] = useState(false);
   const [roomName, setRoomName] = useState("")
+
+  const chatRef = useRef()
 
   const navigate = useNavigate()
 
@@ -76,7 +79,7 @@ export default function RoomPage({ user, password }) {
             });
 
             //When user already in the room
-            socket.on("user-connect", peerId => {
+            socket.on("user-connect", ({peerId, username}) => {
               if (peerId !== peer.id) {
                 console.log("A user called!!! socket.on user-connect");
                 const call = peer.call(peerId, stream);
@@ -84,6 +87,7 @@ export default function RoomPage({ user, password }) {
                   console.log("Calling peer and got stream:", peerId);
                   addVideo(userVideoStream, peerId);
                 });
+              chatRef.current?.addSystemMessage(localStorage.getItem("username"),);
               }
             });
 
@@ -167,16 +171,44 @@ export default function RoomPage({ user, password }) {
     setPeers(prev => ({ ...prev, [id]: video }))
   }
 
-  const leaveRoom = () => {
-    api.post("/api/rooms/removeUser", { code: roomId, user: localStorage.getItem("username") })
-    navigate("/");
-  };
+const leaveRoom = () => {
+  // 1. Close all PeerJS connections
+  if (peerRef.current?.connections) {
+    Object.values(peerRef.current.connections).forEach(conns => {
+      conns.forEach(conn => {
+        conn.close();
+      });
+    });
+  }
+
+  // 2. Stop media tracks
+  if (streamRef.current) {
+    streamRef.current.getTracks().forEach(track => track.stop());
+  }
+
+  // 3. Destroy PeerJS instance
+  if (peerRef.current && !peerRef.current.destroyed) {
+    peerRef.current.destroy();
+  }
+
+  // 4. Disconnect socket.io
+  socket.disconnect();
+
+  // 5. Call backend to remove user
+  api.post("/api/rooms/removeUser", {
+    code: roomId,
+    user: localStorage.getItem("username"),
+  });
+
+  // 6. Navigate to home
+  navigate("/");
+};
 
   return (
     <>
       <div className="flex h-screen bg-gray-900 text-gray-100">
         <div className="flex-1 p-4 overflow-auto flex flex-col items-center">
-          <div className="mb-4 h-1/20 text-lg font-semibold">Room: {roomName}</div>
+          <RoomHeader roomId={roomId} />
           <video
             ref={myVideo}
             autoPlay
@@ -211,12 +243,12 @@ export default function RoomPage({ user, password }) {
             </button>
           </div>
 
-          <ChatBox user={user} roomId={roomId} />
+          <ChatBox user={user} roomId={roomId} ref={chatRef} />
         </div>
       </div>
       <button
         onClick={leaveRoom}
-        className="fixed top-4 left-4 z-50 bg-white shadow-md p-2 rounded-full hover:bg-gray-100"
+        className="fixed top-4  z-1 left-4 bg-white shadow-md p-2 rounded-full hover:bg-gray-100"
       >
         <LogOut className="w-5 h-5" />
       </button>
