@@ -41,7 +41,7 @@ export default function RoomPage({ user, password }) {
             myVideo.current.muted = true
 
             const peer = new Peer(undefined, {
-              host: "entrepreneur-analyst-edwards-lancaster.trycloudflare.com/",
+              host: "entrepreneur-analyst-edwards-lancaster.trycloudflare.com",
               port: 443,
               path: "/",
               secure: true,
